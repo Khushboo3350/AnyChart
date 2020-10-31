@@ -282,15 +282,13 @@ anychart.annotationsModule.TrendChannel.prototype.colorize = function(state) {
 
 /** @inheritDoc */
 anychart.annotationsModule.TrendChannel.prototype.checkVisible = function() {
-  var insideBounds = anychart.annotationsModule.TrendChannel.base(this, 'checkVisible');
-  if (!insideBounds && this.anchorsAvailable == anychart.annotationsModule.AnchorSupport.THREE_POINTS) {
-    var x1 = this.coords['xAnchor'];
-    var x2 = this.coords['secondXAnchor'];
+  var isInsideBounds = anychart.annotationsModule.TrendChannel.base(this, 'checkVisible');
 
-    // Not perpendicular to x.
-    return x1 != x2;
-  }
-  return insideBounds;
+  // 'true' if annotation located inside bounds or if it's not perpendicular to x.
+  return isInsideBounds ? isInsideBounds : (
+      this.anchorsAvailable == anychart.annotationsModule.AnchorSupport.THREE_POINTS &&
+      this.coords['xAnchor'] != this.coords['secondXAnchor']
+  );
 };
 
 
