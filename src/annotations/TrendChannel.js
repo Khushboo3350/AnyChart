@@ -285,9 +285,8 @@ anychart.annotationsModule.TrendChannel.prototype.checkVisible = function() {
   var isInsideBounds = anychart.annotationsModule.TrendChannel.base(this, 'checkVisible');
 
   // 'true' if annotation located inside bounds or if it's not perpendicular to x.
-  return isInsideBounds || (
-      this.anchorsAvailable == anychart.annotationsModule.AnchorSupport.THREE_POINTS &&
-      this.coords['xAnchor'] != this.coords['secondXAnchor']
+  return this.anchorsAvailable == anychart.annotationsModule.AnchorSupport.THREE_POINTS && (
+      isInsideBounds || this.coords['xAnchor'] != this.coords['secondXAnchor']
   );
 };
 
