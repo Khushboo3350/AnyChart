@@ -282,12 +282,10 @@ anychart.annotationsModule.TrendChannel.prototype.colorize = function(state) {
 
 /** @inheritDoc */
 anychart.annotationsModule.TrendChannel.prototype.checkVisible = function() {
-  var isInsideBounds = anychart.annotationsModule.TrendChannel.base(this, 'checkVisible');
-
   // 'true' if annotation located inside bounds or if it's not perpendicular to x.
   return this.anchorsAvailable == anychart.annotationsModule.AnchorSupport.THREE_POINTS && (
-      isInsideBounds || this.coords['xAnchor'] != this.coords['secondXAnchor']
-  );
+      anychart.annotationsModule.TrendChannel.base(this, 'checkVisible') ||
+      this.coords['xAnchor'] != this.coords['secondXAnchor']);
 };
 
 
