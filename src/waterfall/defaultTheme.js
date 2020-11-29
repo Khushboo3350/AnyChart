@@ -77,10 +77,16 @@ goog.mixin(goog.global['anychart']['themes']['defaultTheme'], {
     'stackLabels': {
       'anchor': 'auto',
       'enabled': false,
-      'format': function(context) {
-        return context['value'];
-      },
+      'format': '{%total}',
       'position': 'auto'
+    },
+    'connectors': {
+      'stroke': '#697474',
+      'labels': {
+        'format': '{%stack}',
+        'position': 'auto',
+        'anchor': 'auto'
+      }
     }
   }
 });
