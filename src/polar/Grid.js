@@ -96,10 +96,24 @@ anychart.polarModule.Grid.prototype.drawInterlaceCircuit = function(ratio, prevR
  */
 anychart.polarModule.Grid.prototype.drawInterlaceRadial = function(angle, sweep, x, y, prevX, prevY, element) {
   if (!(isNaN(prevX) && isNaN(prevY))) {
-    element.circularArc(this.cx_, this.cy_, this.radius_, this.radius_, angle, -sweep);
+    element.circularArc(
+        this.cx_, this.cy_,
+        this.radius_, this.radius_,
+        angle, -sweep // Outer arc goes counterclockwise.
+    );
     if (this.iRadius_) {
-      element.lineTo(this.cx_ + this.iRadius_ * Math.cos(angle), this.cy_ + this.iRadius_ * Math.sin(angle));
-      element.circularArc(this.cx_, this.cy_, this.iRadius_, this.iRadius_, angle - sweep, sweep);
+      var innerStartAngle = angle - sweep;
+
+      element.lineTo(
+          this.cx_ + goog.math.angleDx(innerStartAngle, this.iRadius_),
+          this.cy_ + goog.math.angleDy(innerStartAngle, this.iRadius_)
+      );
+
+      element.circularArc(
+          this.cx_, this.cy_,
+          this.iRadius_, this.iRadius_,
+          innerStartAngle, sweep // Inner arc goes clockwise.
+      );
     } else {
       element.lineTo(this.cx_, this.cy_);
     }
