@@ -156,7 +156,7 @@ anychart.polarModule.Grid.prototype.drawInternal = function() {
     isOrdinal = anychart.utils.instanceOf(xScale, anychart.scales.Ordinal);
     ticks = (this.getOption('isMinor') && !isOrdinal) ? xScale.minorTicks() : xScale.ticks();
     ticksArray = ticks.get();
-    ticksArrLen = this.isSameStartEndOnLinearScale_(xScale, ticksArray) ?
+    ticksArrLen = this.isSameStartEndOnNonOrdinalScale_(xScale, ticksArray) ?
         ticksArray.length - 1 :
         ticksArray.length;
 
@@ -259,20 +259,20 @@ anychart.polarModule.Grid.prototype.drawInternal = function() {
 //endregion
 //region --- Private methods
 /**
- * Checks if scale is linear and first\last ticks
+ * Checks if scale is not ordinal and first\last ticks
  * have same position.
  *
- * @param {anychart.scales.Linear|anychart.scales.Ordinal} scale - Scale to check.
+ * @param {anychart.scales.Base} scale - Scale to check.
  * @param {Array.<number>} ticksArray - Scale ticks.
  *
- * @return {boolean} - If scale is linear and first\last ticks are 1\0 (or 0\1).
+ * @return {boolean} - If scale is not ordinal and first\last ticks are 1\0 (or 0\1).
  *
  * @private
  */
-anychart.polarModule.Grid.prototype.isSameStartEndOnLinearScale_ = function(scale, ticksArray) {
-  var isLinearScale = anychart.utils.instanceOf(scale, anychart.scales.Linear);
+anychart.polarModule.Grid.prototype.isSameStartEndOnNonOrdinalScale_ = function(scale, ticksArray) {
+  var isOrdinal = anychart.utils.instanceOf(scale, anychart.scales.Ordinal);
 
-  if (isLinearScale) {
+  if (!isOrdinal) {
     var firstTickRatio = scale.transform(ticksArray[0]);
     var lastTickRatio = scale.transform(ticksArray[ticksArray.length - 1]);
     var areFirstAndLastTicksSame =
