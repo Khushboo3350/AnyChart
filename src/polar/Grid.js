@@ -97,9 +97,12 @@ anychart.polarModule.Grid.prototype.drawInterlaceCircuit = function(ratio, prevR
 anychart.polarModule.Grid.prototype.drawInterlaceRadial = function(angle, sweep, x, y, prevX, prevY, element) {
   if (!(isNaN(prevX) && isNaN(prevY))) {
     element.circularArc(
-        this.cx_, this.cy_,
-        this.radius_, this.radius_,
-        angle, -sweep // Outer arc goes counterclockwise.
+        this.cx_,
+        this.cy_,
+        this.radius_,
+        this.radius_,
+        angle,
+        -sweep // Outer arc goes counterclockwise.
     );
     if (this.iRadius_) {
       var innerStartAngle = angle - sweep;
@@ -110,42 +113,18 @@ anychart.polarModule.Grid.prototype.drawInterlaceRadial = function(angle, sweep,
       );
 
       element.circularArc(
-          this.cx_, this.cy_,
-          this.iRadius_, this.iRadius_,
-          innerStartAngle, sweep // Inner arc goes clockwise.
+          this.cx_,
+          this.cy_,
+          this.iRadius_,
+          this.iRadius_,
+          innerStartAngle,
+          sweep // Inner arc goes clockwise.
       );
     } else {
       element.lineTo(this.cx_, this.cy_);
     }
     element.close();
   }
-};
-
-
-/**
- * Checks if scale is linear and first and last ticks have same ratio.
- *
- * @param {anychart.scales.Linear|anychart.scales.Ordinal} scale - Scale to check.
- * @param {Array.<number>} ticksArray - Scale ticks.
- *
- * @return {boolean}
- *
- * @private
- */
-anychart.polarModule.Grid.prototype.isSameStartEndOnLinearScale_ = function(scale, ticksArray) {
-  var isLinearScale = anychart.utils.instanceOf(scale, anychart.scales.Linear);
-
-  if (isLinearScale) {
-    var firstTickRatio = scale.transform(ticksArray[0]);
-    var lastTickRatio = scale.transform(ticksArray[ticksArray.length - 1]);
-    var areFirstAndLastTicksSame =
-        (firstTickRatio == 0 && lastTickRatio == 1) ||
-        (firstTickRatio == 1 && lastTickRatio == 0); // Inverted scale case.
-
-    return areFirstAndLastTicksSame;
-  }
-
-  return false;
 };
 
 
@@ -274,6 +253,36 @@ anychart.polarModule.Grid.prototype.drawInternal = function() {
       prevRatio = ratio;
     }
   }
+};
+
+
+//endregion
+//region --- Private methods
+/**
+ * Checks if scale is linear and first\last ticks
+ * have same position.
+ *
+ * @param {anychart.scales.Linear|anychart.scales.Ordinal} scale - Scale to check.
+ * @param {Array.<number>} ticksArray - Scale ticks.
+ *
+ * @return {boolean} - If scale is linear and first\last ticks are 1\0 (or 0\1).
+ *
+ * @private
+ */
+anychart.polarModule.Grid.prototype.isSameStartEndOnLinearScale_ = function(scale, ticksArray) {
+  var isLinearScale = anychart.utils.instanceOf(scale, anychart.scales.Linear);
+
+  if (isLinearScale) {
+    var firstTickRatio = scale.transform(ticksArray[0]);
+    var lastTickRatio = scale.transform(ticksArray[ticksArray.length - 1]);
+    var areFirstAndLastTicksSame =
+        (firstTickRatio == 0 && lastTickRatio == 1) ||
+        (firstTickRatio == 1 && lastTickRatio == 0); // Inverted scale case.
+
+    return areFirstAndLastTicksSame;
+  }
+
+  return false;
 };
 
 
