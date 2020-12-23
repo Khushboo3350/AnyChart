@@ -122,6 +122,33 @@ anychart.polarModule.Grid.prototype.drawInterlaceRadial = function(angle, sweep,
 };
 
 
+/**
+ * Checks if scale is linear and first and last ticks have same ratio.
+ *
+ * @param {anychart.scales.Linear|anychart.scales.Ordinal} scale - Scale to check.
+ * @param {Array.<number>} ticksArray - Scale ticks.
+ *
+ * @return {boolean}
+ *
+ * @private
+ */
+anychart.polarModule.Grid.prototype.isSameStartEndOnLinearScale_ = function(scale, ticksArray) {
+  var isLinearScale = anychart.utils.instanceOf(scale, anychart.scales.Linear);
+
+  if (isLinearScale) {
+    var firstTickRatio = scale.transform(ticksArray[0]);
+    var lastTickRatio = scale.transform(ticksArray[ticksArray.length - 1]);
+    var areFirstAndLastTicksSame =
+        (firstTickRatio == 0 && lastTickRatio == 1) ||
+        (firstTickRatio == 1 && lastTickRatio == 0); // Inverted scale case.
+
+    return areFirstAndLastTicksSame;
+  }
+
+  return false;
+};
+
+
 /** @inheritDoc */
 anychart.polarModule.Grid.prototype.drawInternal = function() {
   var xScale = /** @type {anychart.scales.Linear|anychart.scales.Ordinal} */(this.xScale());
@@ -150,10 +177,9 @@ anychart.polarModule.Grid.prototype.drawInternal = function() {
     isOrdinal = anychart.utils.instanceOf(xScale, anychart.scales.Ordinal);
     ticks = (this.getOption('isMinor') && !isOrdinal) ? xScale.minorTicks() : xScale.ticks();
     ticksArray = ticks.get();
-    ticksArrLen = ticksArray.length;
-    if (!isOrdinal && xScale.transform(xScale.ticks().get()[0]) == 0 && xScale.transform(ticksArray[ticksArrLen - 1]) == 1) {
-      ticksArrLen--;
-    }
+    ticksArrLen = this.isSameStartEndOnLinearScale_(xScale, ticksArray) ?
+        ticksArray.length - 1 :
+        ticksArray.length;
 
     var sweep = 360 / ticksArrLen;
     var angleRad, x, y, prevX = NaN, prevY = NaN, xRatio, angle;
