@@ -281,7 +281,7 @@ anychart.polarModule.Grid.prototype.getSectorsCount_ = function(ticksArray) {
 
   if (!isOrdinal) {
     var firstTickRatio = xScale.transform(ticksArray[0]);
-    var lastTickRatio = xScale.transform(ticksArray[ticksArray.length - 1]);
+    var lastTickRatio = xScale.transform(ticksArray[ticksCount - 1]);
     var areFirstAndLastTicksSame =
         (firstTickRatio == 0 && lastTickRatio == 1) ||
         (firstTickRatio == 1 && lastTickRatio == 0); // Inverted scale case.
