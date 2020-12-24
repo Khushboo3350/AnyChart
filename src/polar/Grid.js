@@ -277,6 +277,7 @@ anychart.polarModule.Grid.prototype.drawInternal = function() {
 anychart.polarModule.Grid.prototype.getSectorsCount_ = function(ticksArray) {
   var xScale = this.xScale();
   var isOrdinal = xScale.getType() == anychart.enums.ScaleTypes.ORDINAL;
+  var ticksCount = ticksArray.length;
 
   if (!isOrdinal) {
     var firstTickRatio = xScale.transform(ticksArray[0]);
@@ -285,10 +286,10 @@ anychart.polarModule.Grid.prototype.getSectorsCount_ = function(ticksArray) {
         (firstTickRatio == 0 && lastTickRatio == 1) ||
         (firstTickRatio == 1 && lastTickRatio == 0); // Inverted scale case.
 
-    return ticksArray.length - 1;
+    return areFirstAndLastTicksSame ? ticksCount - 1 : ticksCount;
   }
 
-  return ticksArray.length;
+  return ticksCount;
 };
 
 
