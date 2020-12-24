@@ -98,7 +98,15 @@ anychart.polarModule.Grid.prototype.drawInterlaceCircuit = function(ratio, prevR
 anychart.polarModule.Grid.prototype.drawInterlaceRadial = function(angle, sweep, x, y, prevX, prevY, element) {
   if (!(isNaN(prevX) && isNaN(prevY))) {
     var isXScaleInverted = this.xScale().inverted();
-    var sweepDirection = isXScaleInverted ? sweep : -sweep;
+    /*
+      Positive value means drawing clockwise, negative - counterclockwise.
+      When xScale.inverted(false), sectors are drawn in clockwise order,
+      when xScale.inverted(true) - counterclockwise.
+      But order in which segments of the sector path are drawn is always
+      inverted.
+      Drawing of the sector starts from the outer arc.
+     */
+    var centralAngleDirected = isXScaleInverted ? sweep : -sweep;
 
     element.circularArc(
         this.cx_,
@@ -106,10 +114,10 @@ anychart.polarModule.Grid.prototype.drawInterlaceRadial = function(angle, sweep,
         this.radius_,
         this.radius_,
         angle,
-        sweepDirection // Outer arc goes counterclockwise.
+        centralAngleDirected // Outer arc goes counterclockwise.
     );
     if (this.iRadius_) {
-      var innerStartAngle = angle + sweepDirection;
+      var innerStartAngle = angle + centralAngleDirected;
 
       element.lineTo(
           this.cx_ + goog.math.angleDx(innerStartAngle, this.iRadius_),
@@ -122,7 +130,7 @@ anychart.polarModule.Grid.prototype.drawInterlaceRadial = function(angle, sweep,
           this.iRadius_,
           this.iRadius_,
           innerStartAngle,
-          -sweepDirection // Inner arc goes clockwise.
+          -centralAngleDirected // Inner arc goes clockwise.
       );
     } else {
       element.lineTo(this.cx_, this.cy_);
