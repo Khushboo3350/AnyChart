@@ -259,7 +259,7 @@ anychart.polarModule.Grid.prototype.drawInternal = function() {
 /**
  * Returns number of sectors for X grids.
  *
- * @param {*} ticksArray 
+ * @param {Array.<number>} ticksArray 
  *
  * @return {number}
  */
