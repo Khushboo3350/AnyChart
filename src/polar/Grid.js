@@ -84,14 +84,15 @@ anychart.polarModule.Grid.prototype.drawInterlaceCircuit = function(ratio, prevR
 
 
 /**
- * Draw angle line.
- * @param {number} angle .
- * @param {number} sweep .
- * @param {number} x .
- * @param {number} y .
- * @param {number} prevX .
- * @param {number} prevY .
- * @param {acgraph.vector.Path} element Path element to draw interlace .
+ * Draw polar grid sector.
+ *
+ * @param {number} angle - Sector start angle in degrees.
+ * @param {number} sweep - Sector central angle in degrees.
+ * @param {number} x - Unused.
+ * @param {number} y - Unused.
+ * @param {number} prevX - Previous point x.
+ * @param {number} prevY - Prefious point y.
+ * @param {acgraph.vector.Path} element - Path element to draw interlace .
  * @protected
  */
 anychart.polarModule.Grid.prototype.drawInterlaceRadial = function(angle, sweep, x, y, prevX, prevY, element) {
