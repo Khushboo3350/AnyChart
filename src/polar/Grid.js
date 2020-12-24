@@ -96,7 +96,7 @@ anychart.polarModule.Grid.prototype.drawInterlaceCircuit = function(ratio, prevR
  * @protected
  */
 anychart.polarModule.Grid.prototype.drawInterlaceRadial = function(angle, sweep, x, y, prevX, prevY, element) {
-  if (!(isNaN(prevX) && isNaN(prevY))) {
+  // if (!(isNaN(prevX) && isNaN(prevY))) {
     var isXScaleInverted = this.xScale().inverted();
     /*
       Positive value means drawing clockwise, negative - counterclockwise.
@@ -106,7 +106,7 @@ anychart.polarModule.Grid.prototype.drawInterlaceRadial = function(angle, sweep,
       inverted.
       Drawing of the sector starts from the outer arc.
      */
-    var centralAngleDirected = isXScaleInverted ? sweep : -sweep;
+    var centralAngleDirected = isXScaleInverted ? -sweep : sweep;
 
     element.circularArc(
         this.cx_,
@@ -136,7 +136,7 @@ anychart.polarModule.Grid.prototype.drawInterlaceRadial = function(angle, sweep,
       element.lineTo(this.cx_, this.cy_);
     }
     element.close();
-  }
+  // }
 };
 
 
@@ -201,10 +201,10 @@ anychart.polarModule.Grid.prototype.drawInternal = function() {
         cy = this.cy_;
       }
 
-      if (i) {
-        path = this.getFillElement(i - 1);
+      // if (i) {
+        path = this.getFillElement(i);
         this.drawInterlaceRadial(angle, sweep, x, y, prevX, prevY, path);
-      }
+      // }
       if (i || this.getOption('drawLastLine'))
         this.drawLineRadial(x, y, cx, cy, xPixelShift, yPixelShift);
 
@@ -218,7 +218,7 @@ anychart.polarModule.Grid.prototype.drawInternal = function() {
     angleRad = angle * Math.PI / 180;
     x = Math.round(this.cx_ + this.radius_ * Math.cos(angleRad));
     y = Math.round(this.cy_ + this.radius_ * Math.sin(angleRad));
-    this.drawInterlaceRadial(angle, sweep, x, y, prevX, prevY, path);
+    // this.drawInterlaceRadial(angle, sweep, x, y, prevX, prevY, path);
   } else {
     ticksArray = this.getTicksArray_(yScale);
     var ringsCount = ticksArray.length;
