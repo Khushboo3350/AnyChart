@@ -139,7 +139,7 @@ anychart.polarModule.Grid.prototype.drawInternal = function() {
   this.clearFillElements();
   this.lineElement().clear();
 
-  var isOrdinal, ticks, ticksArray, ticksArrLen;
+  var ticksArray;
   /** @type {acgraph.vector.Path} */
   var path;
 
@@ -156,26 +156,22 @@ anychart.polarModule.Grid.prototype.drawInternal = function() {
   var startAngle = /** @type {number} */(this.getOption('startAngle')) - 90;
 
   if (this.isRadial()) {
-    isOrdinal = anychart.utils.instanceOf(xScale, anychart.scales.Ordinal);
-    ticks = (this.getOption('isMinor') && !isOrdinal) ? xScale.minorTicks() : xScale.ticks();
-    ticksArray = ticks.get();
-    ticksArrLen = this.isSameStartEndOnNonOrdinalScale_(xScale, ticksArray) ?
-        ticksArray.length - 1 :
-        ticksArray.length;
+    ticksArray = this.getTicksArray_(xScale);
+    var sectorsCount = this.getSectorsCount_(ticksArray);
 
-    var sweep = 360 / ticksArrLen;
+    var sweep = 360 / sectorsCount;
     var angleRad, x, y, prevX = NaN, prevY = NaN, xRatio, angle;
 
     var stroke = this.getOption('stroke');
     var lineThickness = stroke['thickness'] ? stroke['thickness'] : 1;
-    var xPixelShift, yPixelShift;
-    for (i = 0; i < ticksArrLen; i++) {
+
+    for (i = 0; i < sectorsCount; i++) {
       xRatio = xScale.transform(ticksArray[i]);
       angle = goog.math.standardAngle(startAngle + 360 * xRatio);
       angleRad = goog.math.toRadians(angle);
 
-      xPixelShift = 0;
-      yPixelShift = 0;
+      var xPixelShift = 0;
+      var yPixelShift = 0;
       if (!angle) {
         yPixelShift = lineThickness % 2 == 0 ? 0 : -.5;
       } else if (angle == 90) {
@@ -215,13 +211,12 @@ anychart.polarModule.Grid.prototype.drawInternal = function() {
     y = Math.round(this.cy_ + this.radius_ * Math.sin(angleRad));
     this.drawInterlaceRadial(angle, sweep, x, y, prevX, prevY, path);
   } else {
-    isOrdinal = anychart.utils.instanceOf(yScale, anychart.scales.Ordinal);
-    ticks = isOrdinal ? yScale.ticks() : this.getOption('isMinor') ? yScale.minorTicks() : yScale.ticks();
-    ticksArray = ticks.get();
-    ticksArrLen = ticksArray.length;
+    ticksArray = this.getTicksArray_(yScale);
+    var ringsCount = ticksArray.length;
+    var isOrdinal = yScale.getType() == anychart.enums.ScaleTypes.ORDINAL;
 
     var prevRatio = NaN;
-    for (i = 0; i < ticksArrLen; i++) {
+    for (i = 0; i < ringsCount; i++) {
       var tickVal = ticksArray[i];
       var leftTick, rightTick;
       if (goog.isArray(tickVal)) {
@@ -234,7 +229,7 @@ anychart.polarModule.Grid.prototype.drawInternal = function() {
 
       if (i != 0)
         path = this.getFillElement(i - 1);
-      if (i == ticksArrLen - 1) {
+      if (i == ringsCount - 1) {
         if (isOrdinal) {
           this.drawInterlaceCircuit(ratio, prevRatio, path);
           path = this.getFillElement(i);
@@ -262,30 +257,42 @@ anychart.polarModule.Grid.prototype.drawInternal = function() {
 //endregion
 //region --- Private methods
 /**
- * Checks if scale is not ordinal and first\last ticks
- * have same position.
+ * Returns number of sectors for X grids.
  *
- * @param {anychart.scales.Base} scale - Scale to check.
- * @param {Array.<number>} ticksArray - Scale ticks.
+ * @param {*} ticksArray 
  *
- * @return {boolean} - If scale is not ordinal and first\last ticks are 1\0 (or 0\1).
- *
- * @private
+ * @return {number}
  */
-anychart.polarModule.Grid.prototype.isSameStartEndOnNonOrdinalScale_ = function(scale, ticksArray) {
-  var isOrdinal = anychart.utils.instanceOf(scale, anychart.scales.Ordinal);
-
+anychart.polarModule.Grid.prototype.getSectorsCount_ = function(ticksArray) {
+  var xScale = this.xScale();
+  var isOrdinal = xScale.getType() === anychart.enums.ScaleTypes.ORDINAL;
+  
   if (!isOrdinal) {
-    var firstTickRatio = scale.transform(ticksArray[0]);
-    var lastTickRatio = scale.transform(ticksArray[ticksArray.length - 1]);
+    var firstTickRatio = xScale.transform(ticksArray[0]);
+    var lastTickRatio = xScale.transform(ticksArray[ticksArray.length - 1]);
     var areFirstAndLastTicksSame =
         (firstTickRatio == 0 && lastTickRatio == 1) ||
         (firstTickRatio == 1 && lastTickRatio == 0); // Inverted scale case.
 
-    return areFirstAndLastTicksSame;
+    return ticksArray.length - 1;
   }
 
-  return false;
+  return ticksArray.length;
+};
+
+
+/**
+ * Returns array of ticks.
+ *
+ * @param {anychart.scales.Base} scale 
+ *
+ * @return {Array.<number>}
+ */
+anychart.polarModule.Grid.prototype.getTicksArray_ = function(scale) {
+  var isMinor = this.getOption('isMinor');
+  var isOrdinal = scale.getType() === anychart.enums.ScaleTypes.ORDINAL;
+  var ticks = (isMinor && !isOrdinal) ? scale.minorTicks() : scale.ticks();
+  return ticks.get();
 };
 
 
