@@ -268,14 +268,16 @@ anychart.polarModule.Grid.prototype.drawInternal = function() {
 /**
  * Returns number of sectors for X grids.
  *
- * @param {Array.<number>} ticksArray 
+ * @param {Array.<number>} ticksArray - Scale ticks array.
  *
  * @return {number}
+ *
+ * @private
  */
 anychart.polarModule.Grid.prototype.getSectorsCount_ = function(ticksArray) {
   var xScale = this.xScale();
-  var isOrdinal = xScale.getType() === anychart.enums.ScaleTypes.ORDINAL;
-  
+  var isOrdinal = xScale.getType() == anychart.enums.ScaleTypes.ORDINAL;
+
   if (!isOrdinal) {
     var firstTickRatio = xScale.transform(ticksArray[0]);
     var lastTickRatio = xScale.transform(ticksArray[ticksArray.length - 1]);
@@ -293,9 +295,11 @@ anychart.polarModule.Grid.prototype.getSectorsCount_ = function(ticksArray) {
 /**
  * Returns array of ticks.
  *
- * @param {anychart.scales.Base} scale 
+ * @param {anychart.scales.Base} scale - Scale to get ticks array from.
  *
  * @return {Array.<number>}
+ *
+ * @private
  */
 anychart.polarModule.Grid.prototype.getTicksArray_ = function(scale) {
   var isMinor = this.getOption('isMinor');
